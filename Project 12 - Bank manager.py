@@ -22,7 +22,7 @@ Welcome John!
 4. History
 5. Logout'''
 
-account_file = r'C:\Users\RIO SANTINO\python code files\Python beginner projects\Bank manager\data\Bank_accounts.txt'
+account_file = r'C:\Users\Example\python code files\Python beginner projects\Bank manager\data\Bank_accounts.txt'#change this to your file path
 class Bank:
     def __init__(self):
         self.current_user = None
@@ -50,7 +50,8 @@ class Bank:
         accounts[username] = {
         
                 "password": password,
-                "balance": 1500
+                "balance": 1500,
+                "history": []
             }
         
         #put the formatted data in file
@@ -134,10 +135,14 @@ class Bank:
         os.system('cls')
        
         try:
-            accounts[self.current_user]['balance'] += deposit 
+            accounts[self.current_user]['balance'] += deposit
+            accounts[self.current_user]['history'].append(f"Deposited: {deposit} PHP")
+            
 
             with open(account_file, "r+") as file:
                 json.dump(accounts, file, indent=4)
+                
+               
 
         except:
             print("invalid ammount")
@@ -154,10 +159,13 @@ class Bank:
       
         #valid check of withdraw ammount
         if withdraw <= accounts[self.current_user]['balance']:
-            accounts[self.current_user]['balance'] -= withdraw 
+            accounts[self.current_user]['balance'] -= withdraw
+            accounts[self.current_user]['history'].append(f"Withdrew: {withdraw} PHP") 
                     
             with open(account_file, "r+") as file:
                 json.dump(accounts, file, indent=4)
+            
+            
             
         else:
             print("invalid ammount")
@@ -171,6 +179,7 @@ class Bank:
                 
             #ask for account to tranfer and amount
             account = input("Account: ")
+
             #account check
             if account not in (accounts):
                 print("invalid account")
@@ -186,7 +195,8 @@ class Bank:
                 print("invalid int")
                 return
 
-            if float(amount) >= 0:
+            #check if amount valud
+            if float(amount) > 0 and amount <= accounts[self.current_user]['balance']:
                 print(f" {accounts[account]}: {accounts[account]['balance']} PHP")
                 confirm = input("enter amount again to confirm: ")
 
@@ -199,11 +209,13 @@ class Bank:
                 if confirm == amount:
                     accounts[self.current_user]["balance"] -= amount
                     accounts[account]['balance'] += amount
+                    accounts[self.current_user]['history'].append(f"Transferred: {amount} PHP to {account}")
 
                     print(f"Balance: {accounts[self.current_user]['balance']}")
 
                     with open(account_file, "r+") as file:
                         json.dump(accounts, file, indent=4)
+                    
                     
 
             else:
@@ -214,7 +226,11 @@ class Bank:
         
 
     def history(self):
-        ...
+        print("====HISTORY====")
+        with open(account_file, "r+") as Bank_Usernames:
+            accounts = json.load(Bank_Usernames)
+            print(f"History: {accounts[self.current_user]['history']}")
+
     def logout(self):
         self.current_user = None
         print("Logout")
@@ -229,6 +245,7 @@ class Bank:
             with open(account_file, "r+") as Bank_Usernames:
                 accounts = json.load(Bank_Usernames)
                 print(f"Balance: {accounts[self.current_user]['balance']}")
+            
 
         
             choice = input('''
